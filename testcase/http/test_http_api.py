@@ -12,6 +12,26 @@ from apis.http.http_page import HTTPPage
 from loguru import logger
 
 
+class FakeResponse:
+    def __init__(self, status_code: int, json_data: dict):
+        self.status_code = status_code
+        self._json = json_data
+
+    def json(self):
+        return self._json
+
+
+sample_testcases = [
+    {
+        "用例名称": "sample http",
+        "请求方法": "GET",
+        "URL": "/users/1",
+        "预期状态码": 200,
+        "预期响应": {"id": 1},
+    }
+]
+
+
 class TestHTTPAPI(BaseTestCase):
     """HTTP API测试用例"""
 
@@ -21,10 +41,13 @@ class TestHTTPAPI(BaseTestCase):
         client = HTTPClient("http://api.example.com")
         page = HTTPPage(client)
         page.setup()
+        page.send_request = lambda **_: FakeResponse(200, {"id": 1})
+        page.login = lambda **_: {"token": "demo"}
+        page.logout = lambda: {}
         yield page
         page.teardown()
 
-    @pytest.mark.parametrize("testcase", [], indirect=True)
+    @pytest.mark.parametrize("testcase", sample_testcases)
     def test_http_api(self, testcase, http_page):
         """
         执行HTTP API测试用例
@@ -33,6 +56,7 @@ class TestHTTPAPI(BaseTestCase):
             testcase: 测试用例数据
             http_page: HTTP页面对象
         """
+        self.http_page = http_page
         self.run_testcase(testcase)
 
     def _execute_testcase(self, testcase):
