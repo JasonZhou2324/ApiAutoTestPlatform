@@ -94,13 +94,13 @@ default:
 # testcase/http/test_example.py
 import pytest
 from core.http_client import HTTPClient
-from apis.http.example_page import HTTPExamplePage
+from apis.http.http_page import HTTPPage
 
 class TestHTTPExample:
     @pytest.fixture
     def http_page(self):
         client = HTTPClient("http://api.example.com")
-        page = HTTPExamplePage(client)
+        page = HTTPPage(client)
         page.setup()
         yield page
         page.teardown()
@@ -116,13 +116,13 @@ class TestHTTPExample:
 # testcase/zmq/test_example.py
 import pytest
 from core.zmq_client import ZMQClient
-from apis.zmq.example_page import ZMQExamplePage
+from apis.zmq.zmq_page import ZMQPage
 
 class TestZMQExample:
     @pytest.fixture
     def zmq_page(self):
         client = ZMQClient("localhost", 5555)
-        page = ZMQExamplePage(client)
+        page = ZMQPage(client)
         page.setup()
         yield page
         page.teardown()
