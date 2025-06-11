@@ -285,6 +285,18 @@ class SocketPage:
         
         raise ValueError("下载文件失败")
 
+    def cleanup_session(self) -> None:
+        """清理会话信息"""
+        if self.session_id:
+            cleanup_data = {
+                'type': 'cleanup',
+                'session_id': self.session_id
+            }
+            try:
+                self.send_message(cleanup_data)
+            finally:
+                self.session_id = None
+
     def __enter__(self):
         """上下文管理器入口"""
         self.setup()

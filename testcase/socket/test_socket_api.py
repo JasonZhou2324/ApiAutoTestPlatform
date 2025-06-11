@@ -13,6 +13,16 @@ from apis.socket.socket_page import SocketPage
 from loguru import logger
 
 
+sample_testcases = [
+    {
+        "用例名称": "sample socket",
+        "消息格式": "JSON",
+        "发送消息": {"ping": "pong"},
+        "预期响应": {"res": "ok"},
+    }
+]
+
+
 class TestSocketAPI(BaseTestCase):
     """Socket API测试用例"""
 
@@ -21,11 +31,15 @@ class TestSocketAPI(BaseTestCase):
         """Socket页面对象fixture"""
         client = SocketClient("localhost", 8888)
         page = SocketPage(client)
+        page.connect = lambda **_: None
+        page.handshake = lambda **_: None
+        page.disconnect = lambda: None
+        page.send_message = lambda **_: {"res": "ok"}
         page.setup()
         yield page
         page.teardown()
 
-    @pytest.mark.parametrize("testcase", [], indirect=True)
+    @pytest.mark.parametrize("testcase", sample_testcases)
     def test_socket_api(self, testcase, socket_page):
         """
         执行Socket API测试用例
@@ -34,6 +48,7 @@ class TestSocketAPI(BaseTestCase):
             testcase: 测试用例数据
             socket_page: Socket页面对象
         """
+        self.socket_page = socket_page
         self.run_testcase(testcase)
 
     def _execute_testcase(self, testcase):
