@@ -174,7 +174,7 @@ class ZMQClient:
 
     def send(
         self,
-        data: Union[str, bytes, Dict[str, Any]],
+        data: Union[str, bytes, Dict[str, Any], List[Union[str, bytes, Dict[str, Any]]]],
         message_format: str = 'JSON',
         multipart: bool = False
     ) -> None:
@@ -194,13 +194,13 @@ class ZMQClient:
             raise ConnectionError("未连接到服务器")
 
         try:
-            # 打包数据
-            packed_data = self._pack_data(data, message_format)
-
-            # 发送数据
-            if multipart and isinstance(data, (list, tuple)):
-                self.socket.send_multipart(packed_data)
+            if multipart:
+                if not isinstance(data, (list, tuple)):
+                    raise ValueError("Multipart 数据必须是列表或元组")
+                packed_parts = [self._pack_data(part, message_format) for part in data]
+                self.socket.send_multipart(packed_parts)
             else:
+                packed_data = self._pack_data(data, message_format)
                 self.socket.send(packed_data)
 
             logger.debug(f"已发送数据: {data}")
