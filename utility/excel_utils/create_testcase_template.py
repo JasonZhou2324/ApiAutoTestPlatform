@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-@File    : creat_testcase_temp.py
+@File    : create_testcase_template.py
 @Time    : 2025/6/10 13:49
 @Author  : zhouming
 """
