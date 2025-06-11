@@ -21,6 +21,6 @@ def find_project_root() -> Path:
 def get_template_path() -> Path:
     """获取测试用例模板路径"""
     project_root = find_project_root()
-    template_path = project_root / 'testcase' / 'templates' / 'testcase_template.xlsx'
+    template_path = project_root / 'testcase' / 'templates' / "testcase_template.xlsx"
     template_path.parent.mkdir(parents=True, exist_ok=True)
     return template_path
